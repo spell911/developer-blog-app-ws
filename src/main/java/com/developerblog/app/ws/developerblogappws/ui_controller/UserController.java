@@ -7,7 +7,8 @@ import java.util.UUID;
 import javax.validation.Valid;
 
 import com.developerblog.app.ws.developerblogappws.ui_model.User;
-import com.developerblog.app.ws.developerblogappws.ui_model_request.UserDetail;
+import com.developerblog.app.ws.developerblogappws.ui_model_request.UserDetails;
+import com.developerblog.app.ws.developerblogappws.ui_model_request.UserDetailsUpdate;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -28,13 +29,15 @@ public class UserController {
 
     Map<String, User> users;
 
+    // RETIVE USERS
     @GetMapping
-    public User getUsers(@RequestParam(value = "page", defaultValue = "1") int page,
+    public ResponseEntity<User> getUsers(@RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "limit", defaultValue = "50") int limit,
             @RequestParam(value = "sort", defaultValue = "desc", required = false) String sort) {
-        return new User();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    // RETIVE USER
     @GetMapping(path = "/{id}", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XHTML_XML_VALUE })
     public ResponseEntity<User> getUser(@PathVariable String id) {
         if (users.containsKey(id)) {
@@ -44,14 +47,14 @@ public class UserController {
         }
     }
 
-    // ADD USER
+    // CREATE USER
     @PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XHTML_XML_VALUE }, produces = {
             MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XHTML_XML_VALUE })
-    public ResponseEntity<User> createUser(@Valid @RequestBody UserDetail userDetail) {
+    public ResponseEntity<User> createUser(@Valid @RequestBody UserDetails userDetails) {
         User user = new User();
-        user.setFirstName(userDetail.getFirstName());
-        user.setLastName(userDetail.getLastName());
-        user.setEmail(userDetail.getEmail());
+        user.setFirstName(userDetails.getFirstName());
+        user.setLastName(userDetails.getLastName());
+        user.setEmail(userDetails.getEmail());
         String id = UUID.randomUUID().toString();
         user.setId(id);
         if (users == null)
@@ -60,14 +63,22 @@ public class UserController {
         return new ResponseEntity<User>(user, HttpStatus.OK);
     }
 
-    @PutMapping
-    public String updateUser() {
-        return "UPDATE USER";
+    // UPDATE USER
+    @PutMapping(path = "/{id}", consumes = { MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_XHTML_XML_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.APPLICATION_XHTML_XML_VALUE })
+    public User updateUser(@PathVariable String id, @Valid @RequestBody UserDetailsUpdate userDetailsUpdateBody) {
+        User userDetailsUpdate = users.get(id);
+        userDetailsUpdate.setFirstName(userDetailsUpdateBody.getFirstName());
+        userDetailsUpdate.setLastName(userDetailsUpdateBody.getLastName());
+        users.put(id, userDetailsUpdate);
+        return userDetailsUpdate;
     }
 
-    @DeleteMapping
-    public String deleteUser() {
-        return "DELETE USER";
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
+        users.remove(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

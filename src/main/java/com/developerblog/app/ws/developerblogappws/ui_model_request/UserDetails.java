@@ -3,7 +3,7 @@ package com.developerblog.app.ws.developerblogappws.ui_model_request;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class UserDetail {
+public class UserDetails {
     @NotNull(message = "first name can't be null")
     private String firstName;
     @NotNull(message = "last name can't be null")
@@ -14,11 +14,11 @@ public class UserDetail {
     @Size(min = 8, max = 16, message = "password lenght between 8 and 16")
     private String password;
 
-    public UserDetail() {
+    public UserDetails() {
 
     }
 
-    public UserDetail(String firstName, String lastName, String email, String password) {
+    public UserDetails(String firstName, String lastName, String email, String password) {
         super();
         this.firstName = firstName;
         this.lastName = lastName;
