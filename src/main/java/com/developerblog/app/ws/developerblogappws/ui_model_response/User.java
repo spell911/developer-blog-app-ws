@@ -1,4 +1,4 @@
-package com.developerblog.app.ws.developerblogappws.ui_model;
+package com.developerblog.app.ws.developerblogappws.ui_model_response;
 
 public class User {
     private String id;
